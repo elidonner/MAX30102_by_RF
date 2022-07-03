@@ -39,12 +39,13 @@
 #include "encode.h"
 
 // #define DEBUG // Uncomment for debug output to the Serial stream
+// #define CALIBRATE //uncomment to see calibration mode
+#define DELAY_PROBLEM // uncomment to see issue with delay
 
 #ifndef DEBUG
 #define TO_TXT // Uncomment for printing to txt file, only possible without debug
 #endif
 
-// #define DELAY_PROBLEM // uncomment to see issue with delay
 
 // Interrupt pin
 const byte oxiInt = D3; // pin connected to MAX30102 INT
@@ -87,8 +88,8 @@ bool redCalibrated = false;
 bool onPerson = false;
 
 // led intensities
-int irIntensity = 255;
-int redIntensity = 255;
+int irIntensity = 80;
+int redIntensity = 80;
 
 // DUMMY Buffer, normally there is a buffer, used to store 4096 bytes of data (one page of flash storage)
 // Our data includes IMU readings, pulse ox readings, time stamps, etc
@@ -114,6 +115,7 @@ void loop()
 {
 
   // calibrate the leds
+  #ifdef CALIBRATE
   if (!check_calibration())
   {
     calibrate_leds();
@@ -133,12 +135,19 @@ void loop()
       }
     }
   }
+#else
+    for (i = 0; i < BUFFER_SIZE; i++)
+    {
+      read_value(i);
+    }
+#endif
+
 
   // calculate heart rate and SpO2 after BUFFER_SIZE samples (ST seconds of samples) using Robert's method
   rf_heart_rate_and_oxygen_saturation(aun_ir_buffer, BUFFER_SIZE, aun_red_buffer, &n_spo2, &ch_spo2_valid, &n_heart_rate, &ch_hr_valid, &ratio, &correl);
   elapsedTime = millis() - timeStart;
 #ifdef TO_TXT
-  Serial.println((unsigned int) elapsedTime, time_stamp_e);
+  Serial.println(encode_data((unsigned int) elapsedTime, time_stamp_e));
 #endif
 }
 

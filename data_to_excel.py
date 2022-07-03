@@ -142,7 +142,7 @@ def write_to_sheet(txt, sheet):
                 print("problem",i)
             finally:
                 i += 1
-    # fill_in_time_gaps(sheet)
+    fill_in_time_gaps(sheet)
     # fill_in_bio_gaps(sheet) 
 
 def current_time():
@@ -169,18 +169,17 @@ def main():
     wb = exl.Workbook()
 
     # ####Test
-    data_file = "YOUR_FILE_PATH.txt"
-    create_sheet(wb, data_file, "Cal_Problem")
+    data_file = "YOUR_FILE_PATH1"
+    create_sheet(wb, data_file, "DELAY")
 
     # ####Test
-    data_file = "YOUR_FILE_PATH.txt"
-    create_sheet(wb, data_file, "Good_Data")
+    data_file = "YOUR_FILE_PATH2"
+    create_sheet(wb, data_file, "NO_DELAY")
 
     #save the file
-    wb.save("YOUR_FILE_PATH.xlsx")
+    wb.save("YOUR_FILE_PATH")
 
-    #run following line to find any problems in your data
-    # data_file = "YOUR_FILE_PATH.txt"
+    # data_file = "YOUR_FILE_PATH"
     # find_problem_rows(data_file)
 
     print('Done:', current_time())
